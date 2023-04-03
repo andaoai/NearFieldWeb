@@ -1,32 +1,49 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
     <router-view/>
   </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import { RouterView } from 'vue-router';
 
-nav {
-  padding: 30px;
-}
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
 
-nav a.router-link-exact-active {
-  color: #42b983;
+export default {
+  name: "App",
+  components: { RouterView },
+  beforeCreate(){
+    //初始化websocket
+    // this.initSocket()
+  },
+  created() {
+    //初始化websocket 
+    this.initSocket()
+    
+    //在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener("beforeunload",()=>{
+      localStorage.setItem("userName",this.$store.state.userName)
+      localStorage.setItem("userRole",this.$store.state.userRole)
+      // localStorage.setItem("deviceList",this.$store.state.deviceList)
+    })
+    //在页面加载时读取localStorage里的状态信息
+    this.$store.state.userName = localStorage.getItem("userName")
+    this.$store.state.userRole = localStorage.getItem("userRole")
+    // this.$store.state.deviceList = localStorage.getItem("deviceList")
+  },
+  methods: {
+    //websocket初始化
+    initSocket(itemId, userId) {
+      this.$store.commit('initWebsocket', itemId, userId)
+    }
+  }
 }
+</script>
+
+<style lang="less">
+  html,body,h2,p{
+    margin: 0;
+    padding: 0;
+  }
 </style>
+
